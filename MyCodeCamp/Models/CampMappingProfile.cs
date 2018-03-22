@@ -20,16 +20,14 @@ namespace MyCodeCamp.Models
                 .ForMember(m => m.Length,
                     opt => opt.ResolveUsing(model => (model.EndDate - model.StartDate).Days + 1))
                 .ForMember(m => m.Location,
-                    opt => opt.ResolveUsing(c => new Location()
-                    {
-                        Address1 = c.LocationAddress1,
-                        Address2 = c.LocationAddress2,
-                        Address3 = c.LocationAddress3,
-                        CityTown = c.LocationCityTown,
-                        StateProvince = c.LocationStateProvince,
-                        PostalCode = c.LocationPostalCode,
-                        Country = c.LocationCountry
-                    }));
+                    opt => opt.ResolveUsing<LocationResolver>());
+
+            CreateMap<Speaker, SpeakerModel>()
+                .ForMember(c => c.Url,
+                    opt => opt.ResolveUsing<SpeakerUrlResolver>())
+  
+                .ReverseMap();
         }
+
     }
 }

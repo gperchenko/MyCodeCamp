@@ -9,7 +9,7 @@ namespace MyCodeCamp.Data
     // Basic DB Operations
     void Add<T>(T entity) where T : class;
     void Delete<T>(T entity) where T : class;
-    Task<bool> SaveAllAsync();
+    Task<int> SaveAllAsync();
 
     // Camps
     IEnumerable<Camp> GetAllCamps();
