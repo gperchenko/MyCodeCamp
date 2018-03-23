@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MyCodeCamp.Data;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace MyCodeCamp
 {
@@ -39,6 +40,13 @@ namespace MyCodeCamp
                     opt.SerializerSettings.ReferenceLoopHandling =
                         ReferenceLoopHandling.Ignore;
                 });
+
+            // add swagger
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My Camp API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,17 +56,28 @@ namespace MyCodeCamp
             CampDbInitializer initializer)
         {
 
+            // log configurations
+
             loggerFactory.AddConsole(_config.GetSection("Logging"));
             loggerFactory.AddDebug();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                
+                app.UseDeveloperExceptionPage();            
             }
 
-            
-
             app.UseMvc();
+
+            // swagger config 
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contacts API V1");
+            });
+
+            // initialize db 
+
             initializer.Seed().Wait();
         }
     }
