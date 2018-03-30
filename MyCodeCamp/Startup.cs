@@ -58,8 +58,11 @@ namespace MyCodeCamp
 
             // log configurations
 
-            loggerFactory.AddConsole(_config.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(_config.GetSection("Logging"));
+            //loggerFactory.AddDebug();
+
+            loggerFactory.AddFile("Logs/MyCodeCamp-{Date}.log");
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();            
