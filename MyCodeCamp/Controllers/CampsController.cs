@@ -13,6 +13,7 @@ namespace MyCodeCamp.Controllers
 {
     [Route(("api/[controller]"))]
     [ValidateModel]
+    [ExceptionHandler]
     public class CampsController : BaseController
     {
         private ILogger<CampsController> _logger;
@@ -32,6 +33,8 @@ namespace MyCodeCamp.Controllers
         [HttpGet("")]
         public IActionResult Get()
         {
+           throw  new ArgumentException("woops");
+
             _logger.LogInformation("All camps request");
 
             var camps = _repo.GetAllCamps();

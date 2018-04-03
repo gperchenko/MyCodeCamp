@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using MyCodeCamp.Validators;
 
 namespace MyCodeCamp.Models
 {
@@ -10,6 +11,7 @@ namespace MyCodeCamp.Models
         [Required]
         [MinLength(3)]
         [MaxLength(20)]
+        [MonikerValidator]
         public string Moniker { get; set; }
 
         [Required]
