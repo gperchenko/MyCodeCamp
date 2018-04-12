@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using MyCodeCamp.Data;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using LogHelper = MyCodeCamp.Helpers.LogHelper;
 
 namespace MyCodeCamp
 {
@@ -61,7 +63,9 @@ namespace MyCodeCamp
             //loggerFactory.AddConsole(_config.GetSection("Logging"));
             //loggerFactory.AddDebug();
 
-            loggerFactory.AddFile("Logs/MyCodeCamp-{Date}.log");
+            var logFile = _config["Logging:LogFile"];
+
+            LogHelper.Init(logFile);
             
             if (env.IsDevelopment())
             {

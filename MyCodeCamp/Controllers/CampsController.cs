@@ -14,118 +14,79 @@ namespace MyCodeCamp.Controllers
     [Route(("api/[controller]"))]
     [ValidateModel]
     [ExceptionHandler]
-    public class CampsController : BaseController
+    public class CampsController : BaseController<CampsController>
     {
-        private ILogger<CampsController> _logger;
-        private ICampRepository _repo;
-        private IMapper _mapper;
+        private readonly ICampRepository _campRepository;
+        private readonly IMapper _mapper;
 
         public CampsController(
-            ICampRepository repo,
-            ILogger<CampsController> logger,
+            ICampRepository campRepository,
             IMapper mapper)
         {
-            _repo = repo;
-            _logger = logger;
+            _campRepository = campRepository;
             _mapper = mapper;
         }
 
         [HttpGet("")]
         public IActionResult Get()
         {
-           throw  new ArgumentException("woops");
+            //Logger.LogInformation("All camps request");
 
-            _logger.LogInformation("All camps request");
-
-            var camps = _repo.GetAllCamps();
+            var camps = _campRepository.GetAllCamps();
             return Ok(_mapper.Map<IEnumerable<CampModel>>(camps));
         }
 
         [HttpGet("{id}", Name = "CampGet")]
         public IActionResult Get(int id, bool includeSpeakers = false)
         {
-            try
-            {
-                var camp = includeSpeakers ? _repo.GetCampWithSpeakers(id) : _repo.GetCamp(id);
+            var camp = includeSpeakers ?
+                _campRepository.GetCampWithSpeakers(id) :
+                _campRepository.GetCamp(id);
 
-                if (camp == null) return NotFound($"Camp {id} was not found");
+            if (camp == null) return NotFound($"Camp {id} was not found");
 
-                return Ok(_mapper.Map<CampModel>(camp));
-            }
-            catch (Exception e)
-            {
-            }
-
-            return BadRequest();
+            return Ok(_mapper.Map<CampModel>(camp));
         }
 
         [HttpPost("")]
         public async Task<IActionResult> Post([FromBody] CampModel model)
         {
-            try
-            {
-                var camp = _mapper.Map<Camp>(model);
 
-                _repo.Add(camp);
-                await _repo.SaveAllAsync();
+            var camp = _mapper.Map<Camp>(model);
 
-                var newUri = Url.Link("CampGet", new { id = camp.Id });
-                return Created(newUri, _mapper.Map<CampModel>(camp));
+            _campRepository.Add(camp);
+            await _campRepository.SaveAllAsync();
 
-            }
-            catch (Exception e)
-            {
-            }
-
-            return BadRequest();
+            var newUri = Url.Link("CampGet", new { id = camp.Id });
+            return Created(newUri, _mapper.Map<CampModel>(camp));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] CampModel model)
         {
-            try
-            {
-              
-                var oldCamp = _repo.GetCamp(id);
-                if (oldCamp == null) return NotFound($"Camp with id {id} not found");
+            var oldCamp = _campRepository.GetCamp(id);
+            if (oldCamp == null) return NotFound($"Camp with id {id} not found");
 
-                _mapper.Map(model, oldCamp);
+            _mapper.Map(model, oldCamp);
 
-                await _repo.SaveAllAsync();
+            await _campRepository.SaveAllAsync();
 
-                return Ok(_mapper.Map<CampModel>(oldCamp));
-
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-            }
-
-            return BadRequest();
+            return Ok(_mapper.Map<CampModel>(oldCamp));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var oldCamp = _repo.GetCamp(id);
-                if (oldCamp == null) return NotFound($"Camp with id {id} not found");
+            var oldCamp = _campRepository.GetCamp(id);
+            if (oldCamp == null) return NotFound($"Camp with id {id} not found");
 
-                // business rule validation here 
+            // business rule validation here 
 
-                _repo.Delete(oldCamp);
+            _campRepository.Delete(oldCamp);
 
-                await _repo.SaveAllAsync();
+            await _campRepository.SaveAllAsync();
 
-                return Ok();
-
-            }
-            catch (Exception e)
-            {
-            }
-
-            return BadRequest();
+            return Ok();
         }
     }
 }

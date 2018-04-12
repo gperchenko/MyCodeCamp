@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyCodeCamp.Controllers;
+
 using MyCodeCamp.Data.Entities;
+using MyCodeCamp.Helpers;
 
 namespace MyCodeCamp.Models
 {
@@ -21,7 +22,7 @@ namespace MyCodeCamp.Models
             string destMember, 
             ResolutionContext context)
         {
-            var url = (IUrlHelper) _httpContextAccessor.HttpContext.Items[BaseController.UrlHelper];
+            var url = (IUrlHelper) _httpContextAccessor.HttpContext.Items[Constants.UrlHelper];
             return url.Link("CampGet", new { id = source.Id });
         }
     }
